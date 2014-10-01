@@ -44,11 +44,12 @@
 }
 
 - (IBAction)onBackButtonPressed:(id)sender {
+    //[self updateAddressBarText:self.webView.request.URL];
     [self.webView goBack];
-    [self updateAddressBarText:self.webView]
 }
 
 - (IBAction)onForwardButtonPressed:(id)sender {
+    //[self updateAddressBarText:self.webView.request.URL];
     [self.webView goForward];
 }
 
@@ -66,7 +67,6 @@
     alertView.title = @"Coming Soon!";
     [alertView addButtonWithTitle:@"Awesome!"];
     [alertView show];
-
 }
 
 - (void)checkAndLoadURLString: (NSString *)webAddress {
@@ -77,16 +77,22 @@
     else if ([webAddress containsString:@"www."]) {
         NSString *httpPrefix = @"http://";
         NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
+        self.webAddress = urlString;
     }
     else if ([webAddress containsString:@".com"]) {
         NSString *httpPrefix = @"http://www.";
         NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
-        [self loadURLString:urlString];
+        self.webAddress = urlString;
     }
     else {
         NSString *googleBaseURL = @"https://www.google.com/#q=";
         NSString *googleSearch = [googleBaseURL stringByAppendingString:webAddress];
-        [self loadURLString:googleSearch];
+        self.webAddress = googleSearch;
+    }
+
+    if (![self.webAddress isEqualToString:@""]) {
+
+        [self loadURLString:self.webAddress];
     }
 }
 
@@ -95,7 +101,7 @@
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:urlRequest];
 
-    [self updateAddressBarText:urlString];
+    [self updateAddressBarText:self.webView.request.URL];
 
     //[self updatePlaceHolderTextInTextField:urlString];
 }
@@ -116,7 +122,9 @@
     }
 }
 
-- (void) updateAddressBarText: (NSString *)urlString {
+- (void) updateAddressBarText: (NSURL *)currentURL {
+    NSString *urlString = [currentURL absoluteString];
     self.urlTextField.text = urlString;
 }
+
 @end
