@@ -29,6 +29,11 @@
     self.webView.scrollView.delegate = self;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    // This selects all the text in the textfield when a user selects the textfield
+    [textField selectAll:nil];
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
     [self checkAndLoadURLString:textField.text];
