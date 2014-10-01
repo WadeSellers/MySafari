@@ -27,11 +27,10 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    NSURL *url = [NSURL URLWithString:textField.text];
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
-    [self.webView loadRequest:urlRequest];
 
+    [self checkAndLoadURLString:textField.text];
     [self checkIfWebViewCanGoOrForward];
+
     return YES;
 }
 
@@ -40,6 +39,7 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [self checkIfWebViewCanGoOrForward];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
@@ -57,6 +57,40 @@
 
 - (IBAction)onReloadButtonPressed:(id)sender {
     [self.webView reload];
+}
+
+- (IBAction)onPlusButtonPressed:(id)sender {
+    
+}
+
+- (void)checkAndLoadURLString: (NSString *)webAddress {
+
+    if ([webAddress containsString:@"http://"]) {
+        [self loadURLString:webAddress];
+    }
+    else if ([webAddress containsString:@"www."]) {
+        NSString *httpPrefix = @"http://";
+        NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
+        [self loadURLString:urlString];
+    }
+    else if ([webAddress containsString:@".com"]) {
+        NSString *httpPrefix = @"http://www.";
+        NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
+        [self loadURLString:urlString];
+    }
+    else {
+        NSString *googleBaseURL = @"https://www.google.com/#q=";
+        NSString *googleSearch = [googleBaseURL stringByAppendingString:webAddress];
+        [self loadURLString:googleSearch];
+    }
+}
+
+- (void)loadURLString: (NSString *)urlString {
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
+    [self.webView loadRequest:urlRequest];
+
+    //[self updatePlaceHolderTextInTextField:urlString];
 }
 
 - (void) checkIfWebViewCanGoOrForward {
