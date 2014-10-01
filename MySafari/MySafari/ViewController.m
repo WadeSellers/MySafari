@@ -20,7 +20,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -39,7 +38,22 @@
 }
 
 - (IBAction)onBackButtonPressed:(id)sender {
+    if (self.webView.canGoBack)
+    {
+        [self.webView goBack];
+    }
 }
 
+- (IBAction)onForwardButtonPressed:(id)sender {
+    [self.webView goForward];
+}
+
+- (IBAction)onStopLoadingButtonPressed:(id)sender {
+    [self.webView stopLoading];
+}
+
+- (IBAction)onReloadButtonPressed:(id)sender {
+    [self.webView reload];
+}
 
 @end
