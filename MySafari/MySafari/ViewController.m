@@ -9,6 +9,8 @@
 #import "ViewController.h"
 
 @interface ViewController () <UIWebViewDelegate, UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet UIButton *backButton;
+@property (weak, nonatomic) IBOutlet UIButton *forwardButton;
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UITextField *urlTextField;
@@ -19,13 +21,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+
+    self.backButton.enabled = NO;
+    self.forwardButton.enabled = NO;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     NSURL *url = [NSURL URLWithString:textField.text];
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:urlRequest];
+
+    [self checkIfWebViewCanGoOrForward];
     return YES;
 }
 
@@ -38,10 +44,7 @@
 }
 
 - (IBAction)onBackButtonPressed:(id)sender {
-    if (self.webView.canGoBack)
-    {
-        [self.webView goBack];
-    }
+    [self.webView goBack];
 }
 
 - (IBAction)onForwardButtonPressed:(id)sender {
@@ -54,6 +57,22 @@
 
 - (IBAction)onReloadButtonPressed:(id)sender {
     [self.webView reload];
+}
+
+- (void) checkIfWebViewCanGoOrForward {
+    if (self.webView.canGoBack){
+        self.backButton.enabled = YES;
+    }
+    else {
+        self.backButton.enabled = NO;
+    }
+
+    if (self.webView.canGoForward) {
+        self.forwardButton.enabled = YES;
+    }
+    else {
+        self.forwardButton.enabled = NO;
+    }
 }
 
 @end
