@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate>
+@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UIButton *forwardButton;
 
@@ -45,6 +45,7 @@
 
 - (IBAction)onBackButtonPressed:(id)sender {
     [self.webView goBack];
+    [self updateAddressBarText:self.webView]
 }
 
 - (IBAction)onForwardButtonPressed:(id)sender {
@@ -60,7 +61,12 @@
 }
 
 - (IBAction)onPlusButtonPressed:(id)sender {
-    
+    UIAlertView *alertView = [[UIAlertView alloc] init];
+    alertView.delegate = self;
+    alertView.title = @"Coming Soon!";
+    [alertView addButtonWithTitle:@"Awesome!"];
+    [alertView show];
+
 }
 
 - (void)checkAndLoadURLString: (NSString *)webAddress {
@@ -71,7 +77,6 @@
     else if ([webAddress containsString:@"www."]) {
         NSString *httpPrefix = @"http://";
         NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
-        [self loadURLString:urlString];
     }
     else if ([webAddress containsString:@".com"]) {
         NSString *httpPrefix = @"http://www.";
@@ -89,6 +94,8 @@
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:urlRequest];
+
+    [self updateAddressBarText:urlString];
 
     //[self updatePlaceHolderTextInTextField:urlString];
 }
@@ -109,4 +116,7 @@
     }
 }
 
+- (void) updateAddressBarText: (NSString *)urlString {
+    self.urlTextField.text = urlString;
+}
 @end
