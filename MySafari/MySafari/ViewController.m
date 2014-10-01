@@ -20,6 +20,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -28,5 +29,17 @@
     [self.webView loadRequest:urlRequest];
     return YES;
 }
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+- (IBAction)onBackButtonPressed:(id)sender {
+}
+
 
 @end
