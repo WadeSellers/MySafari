@@ -8,12 +8,13 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface ViewController () <UIWebViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UIButton *forwardButton;
 
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @property (weak, nonatomic) IBOutlet UITextField *urlTextField;
+@property (weak, nonatomic) IBOutlet UILabel *websiteTitle;
 
 @end
 
@@ -24,6 +25,8 @@
 
     self.backButton.enabled = NO;
     self.forwardButton.enabled = NO;
+
+    self.webView.scrollView.delegate = self;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -41,16 +44,23 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     [self checkIfWebViewCanGoOrForward];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [self updateAddressBarText:self.webView.request.URL];
+    [self.urlTextField resignFirstResponder];
+    NSString *websiteTitle = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    self.websiteTitle.text = websiteTitle;
+
 }
 
 - (IBAction)onBackButtonPressed:(id)sender {
-    //[self updateAddressBarText:self.webView.request.URL];
     [self.webView goBack];
+    [self updateAddressBarText:self.webView.request.URL];
+
 }
 
 - (IBAction)onForwardButtonPressed:(id)sender {
-    //[self updateAddressBarText:self.webView.request.URL];
     [self.webView goForward];
+    [self updateAddressBarText:self.webView.request.URL];
+
 }
 
 - (IBAction)onStopLoadingButtonPressed:(id)sender {
@@ -77,23 +87,19 @@
     else if ([webAddress containsString:@"www."]) {
         NSString *httpPrefix = @"http://";
         NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
-        self.webAddress = urlString;
+        [self loadURLString:urlString];
     }
     else if ([webAddress containsString:@".com"]) {
         NSString *httpPrefix = @"http://www.";
         NSString *urlString = [httpPrefix stringByAppendingString:webAddress];
-        self.webAddress = urlString;
+        [self loadURLString:urlString];
     }
     else {
         NSString *googleBaseURL = @"https://www.google.com/#q=";
         NSString *googleSearch = [googleBaseURL stringByAppendingString:webAddress];
-        self.webAddress = googleSearch;
+        [self loadURLString:googleSearch];
     }
 
-    if (![self.webAddress isEqualToString:@""]) {
-
-        [self loadURLString:self.webAddress];
-    }
 }
 
 - (void)loadURLString: (NSString *)urlString {
@@ -125,6 +131,18 @@
 - (void) updateAddressBarText: (NSURL *)currentURL {
     NSString *urlString = [currentURL absoluteString];
     self.urlTextField.text = urlString;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    //NSLog(@"Test");
+    //NSLog(@"View Height: %f", self.webView.bounds.size.height);
+    self.urlTextField.alpha = 0.0;
+    CGRect newFrame = self.webView.frame;
+
+    newFrame.size.width = self.webView.frame.size.width;
+    newFrame.size.height = self.webView.bounds.size.height + 200;
+    [self.webView setFrame:newFrame];
+    [self.view reloadInputViews];
 }
 
 @end
