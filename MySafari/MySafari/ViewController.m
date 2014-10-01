@@ -133,16 +133,40 @@
     self.urlTextField.text = urlString;
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     //NSLog(@"Test");
     //NSLog(@"View Height: %f", self.webView.bounds.size.height);
-    self.urlTextField.alpha = 0.0;
-    CGRect newFrame = self.webView.frame;
 
-    newFrame.size.width = self.webView.frame.size.width;
-    newFrame.size.height = self.webView.bounds.size.height + 200;
-    [self.webView setFrame:newFrame];
-    [self.view reloadInputViews];
+    CGPoint translation = [scrollView.panGestureRecognizer translationInView:scrollView.superview];
+
+    if(translation.y > 0)
+    {
+        [UIView animateWithDuration:0.5 animations:^{
+            self.urlTextField.alpha = 1.0;
+
+            CGRect newFrame = self.webView.frame;
+
+            newFrame.size.width = self.webView.frame.size.width;
+            newFrame.origin.y = 60;
+            newFrame.size.height = self.webView.bounds.size.height - newFrame.origin.y;
+
+            [self.webView setFrame:newFrame];
+            [self.view reloadInputViews];
+        }];
+    } else
+    {
+        [UIView animateWithDuration:0.5 animations:^{
+            self.urlTextField.alpha = 0.0;
+
+            CGRect newFrame = self.webView.frame;
+
+            newFrame.size.width = self.webView.frame.size.width;
+            newFrame.size.height = self.webView.bounds.size.height + newFrame.origin.y;
+            newFrame.origin.y = 20;
+            [self.webView setFrame:newFrame];
+            [self.view reloadInputViews];
+        }];
+    }
 }
 
 @end
