@@ -105,6 +105,11 @@
         [self loadURLString:googleSearch];
     }
 
+
+    //This is Richmond's solution to adding more suffixes it will allow to send as a NSURL instead of a google search.
+    //NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".(com|org|co|net|edu)$" options:0 error:&error];
+    //NSUInteger numberOfMatches = [regex numberOfMatchesInString:self.urlTextField.text options:0 range:NSMakeRange(0, [self.urlTextField.text length])];
+
 }
 
 - (void)loadURLString: (NSString *)urlString {
@@ -156,7 +161,6 @@
             newFrame.size.height = self.webView.bounds.size.height - newFrame.origin.y;
 
             [self.webView setFrame:newFrame];
-            [self.view reloadInputViews];
         }];
     } else
     {
@@ -169,7 +173,6 @@
             newFrame.size.height = self.webView.bounds.size.height + newFrame.origin.y;
             newFrame.origin.y = 20;
             [self.webView setFrame:newFrame];
-            [self.view reloadInputViews];
         }];
     }
 }
